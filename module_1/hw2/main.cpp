@@ -12,6 +12,10 @@ borders exp_search(int *arr, int amount, int number) {
     
     if (arr[0] >= number) {
         return tmp;
+    } 
+
+    if (arr[amount - 1] < number) {
+        return tmp;
     }
     
     int i = 1;
@@ -27,6 +31,7 @@ borders exp_search(int *arr, int amount, int number) {
     if (tmp.right >= amount) {
         tmp.right = amount - 1;
     }
+
     return tmp;
 }
 
@@ -39,7 +44,6 @@ int bin_search(int *arr, int amount, borders tmp, int value) {
 
     while (tmp.right < tmp.left) {
         middle = (tmp.right + tmp.left) / 2;
-        std::cout << middle << " ";
         arr[middle] >= value ? tmp.right = middle : tmp.left = middle + 1; 
     }
 
@@ -60,10 +64,6 @@ int main() {
     for (size_t i = 0; i < m; i++) {
         std::cin >> B[i];
     }
-
-    // borders tmp;
-    // tmp = exp_search(A, n, B[2]);
-    // std::cout << tmp.left << " " << tmp.right;
 
     for (size_t i = 0; i < m; i++) {
         std::cout << bin_search(A, n, exp_search(A, n, B[i]), B[i]) << " ";
