@@ -1,5 +1,10 @@
 #include <iostream>
 
+template<class T>
+bool is_less(const T &l, const T &r) {
+    return l < r;
+}
+
 template <class T>
 class heap {
 private:
@@ -7,7 +12,7 @@ private:
     int buffer_size = 3;
     T* arr = new T[3];
 
-    void sift_down(int ind) {
+    void sift_down(int ind, bool (*is_less)(const T&, const T&)) {
         int largest = 0;
         int left = 0;
         int right = 0;
@@ -17,10 +22,10 @@ private:
             left = 2 * ind + 1;
             right = 2 * ind + 2;
 
-            if (left <= size - 1 && arr[left] < arr[ind])
+            if (left <= size - 1 && is_less(arr[left], arr[ind]))
                 largest = left;
             
-            if (right <= size - 1 && arr[right] < arr[largest])
+            if (right <= size - 1 && is_less(arr[right], arr[largest]))
                 largest = right;
             
             if (largest != ind) {
@@ -42,18 +47,17 @@ private:
     }
     
 
-    void sift_up(int ind) {
+    void sift_up(int ind, bool (*is_less)(const T&, const T&)) {
         int parent;
         while (ind > 0) {
             parent = (ind - 1)/2;
-            if (arr[ind] < arr[parent]) {
+            if (is_less(arr[ind], arr[parent])) {
                 std::swap(arr[ind], arr[parent]);
             }
             ind = parent;
         }
-    }
-
-
+    };
+    
 public:
     heap() = default;
     heap(const heap&) = delete;
@@ -71,14 +75,14 @@ public:
             grow_buffer();
         }
         arr[size] = elem;
-        sift_up(size);
+        sift_up(size, is_less);
         ++size;
     }
     
     T extract_min() {
         T min = arr[0];
         arr[0] = arr[size - 1];
-        sift_down(0);
+        sift_down(0, is_less);
         --size;
         return min;
     }
@@ -87,7 +91,6 @@ public:
         for (size_t i = 0; i < size; i++) {
             std::cout << arr[i] << " ";
         }
-        
     }
 };
 
