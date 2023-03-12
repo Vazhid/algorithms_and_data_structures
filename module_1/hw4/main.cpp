@@ -7,7 +7,7 @@ private:
     int buffer_size = 3;
     T* arr = new T[3];
 
-    void sift_down(int ind, bool (*is_less)(const T&, const T&)) {
+    void sift_down(int ind) {
         int largest = 0;
         int left = 0;
         int right = 0;
@@ -17,10 +17,10 @@ private:
             left = 2 * ind + 1;
             right = 2 * ind + 2;
 
-            if (left <= size - 1 && is_less(arr[left], arr[ind]))
+            if (left <= size - 1 && arr[left] < arr[ind])
                 largest = left;
             
-            if (right <= size - 1 && is_less(arr[right], arr[largest]))
+            if (right <= size - 1 && arr[right] < arr[largest])
                 largest = right;
             
             if (largest != ind) {
@@ -42,17 +42,18 @@ private:
     }
     
 
-    void sift_up(int ind, bool (*is_less)(const T&, const T&)) {
+    void sift_up(int ind) {
         int parent;
         while (ind > 0) {
             parent = (ind - 1)/2;
-            if (is_less(arr[ind], arr[parent])) {
+            if (arr[ind] < arr[parent]) {
                 std::swap(arr[ind], arr[parent]);
             }
             ind = parent;
         }
-    };
-    
+    }
+
+
 public:
     heap() = default;
     heap(const heap&) = delete;
@@ -70,19 +71,47 @@ public:
             grow_buffer();
         }
         arr[size] = elem;
-        sift_up(size, is_less);
+        sift_up(size);
         ++size;
     }
     
     T extract_min() {
         T min = arr[0];
         arr[0] = arr[size - 1];
-        sift_down(0, is_less);
+        sift_down(0);
         --size;
         return min;
+    }
+
+    void print_heap() {
+        for (size_t i = 0; i < size; i++) {
+            std::cout << arr[i] << " ";
+        }
+        
     }
 };
 
 int main() {
+    heap <int> hp;
+    int amount;
+    int elem;
+    int arr_size;
+    std::cin >> amount;
+
+    for (size_t i = 0; i < amount; i++) {
+        std::cin >> arr_size;
+        for (size_t j = 0; j < arr_size; j++) {
+            std::cin >> elem;
+            hp.add_element(elem);
+        }   
+    }
+
+    amount = hp.get_size();
+
+    for (size_t i = 0; i < amount; i++) {
+        std::cout << hp.extract_min() << " ";
+    }
     
+
+    return 0;
 }
