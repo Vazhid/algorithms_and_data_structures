@@ -1,3 +1,8 @@
+// Дан отсортированный массив целых чисел A[0..n-1] и массив целых чисел B[0..m-1]. Для каждого элемента массива B[i] 
+// найдите минимальный индекс k минимального элемента массива A, 
+// равного или превосходящего B[i]: A[k] >= B[i]. Если такого элемента нет, выведите n. 
+// Время работы поиска k для каждого элемента B[i]: O(log(k)). n, m ≤ 10000.
+
 #include <iostream>
 #include <cassert>
 
@@ -43,7 +48,7 @@ int bin_search(int *arr, int amount, borders tmp, int value) {
 
     int middle = 0;
 
-    while (tmp.right < tmp.left) {
+    while (tmp.right > tmp.left) {
         middle = (tmp.right + tmp.left) / 2;
         arr[middle] >= value ? tmp.right = middle : tmp.left = middle + 1; 
     }
@@ -51,7 +56,7 @@ int bin_search(int *arr, int amount, borders tmp, int value) {
     return tmp.right;
 }
 
-void run() {
+int main() {
     int n, m;
     std::cin >> n >> m;
 
@@ -75,103 +80,4 @@ void run() {
 
     delete[] A;
     delete[] B;
-}
-
-void test_program() {
-    {
-        borders test;
-        int A[3] = {1, 2, 3};
-        int B[3] = {-1, -10, 8};
-        int exp_result[3] = {0, 0, 3};
-        bool flag = true;
-        for (size_t i = 0; i < 3; i++) {
-            test = exp_search(A, 3, B[i]);
-            exp_result[i] == bin_search(A, 3, test, B[i]) ? flag = true : flag = false;
-        }
-        assert(flag == true);
-    }
-
-    {
-        borders test;
-        int A[3] = {1, 2, 3};
-        int B[4] = {4, 0, 0, 2};
-        int exp_result[4] = {3, 0, 0, 1};
-        bool flag = true;
-        for (size_t i = 0; i < 4; i++) {
-            test = exp_search(A, 3, B[i]);
-            exp_result[i] == bin_search(A, 3, test, B[i]) ? flag = true : flag = false;
-        }
-        assert(flag == true);
-    }
-
-    {
-        borders test;
-        int A[4] = {2, 4, 5, 7};
-        int B[3] = {4, 6, 1};
-        int exp_result[3] = {1, 3, 0};
-        bool flag = true;
-        for (size_t i = 0; i < 3; i++) {
-            test = exp_search(A, 4, B[i]);
-            exp_result[i] == bin_search(A, 4, test, B[i]) ? flag = true : flag = false;
-        }
-        assert(flag == true);
-    }
-
-    {
-        borders test;
-        int A[1] = {1};
-        int B[1] = {1};
-        int exp_result[1] = {0};
-        bool flag = true;
-        for (size_t i = 0; i < 1; i++) {
-            test = exp_search(A, 1, B[i]);
-            exp_result[i] == bin_search(A, 1, test, B[i]) ? flag = true : flag = false;
-        }
-        assert(flag == true);
-    }
-
-    {
-        borders test;
-        int A[1] = {1};
-        int B[1] = {10};
-        int exp_result[1] = {1};
-        bool flag = true;
-        for (size_t i = 0; i < 1; i++) {
-            test = exp_search(A, 1, B[i]);
-            exp_result[i] == bin_search(A, 1, test, B[i]) ? flag = true : flag = false;
-        }
-        assert(flag == true);
-    }
-
-    {
-        borders test;
-        int A[1] = {1};
-        int B[1] = {-1};
-        int exp_result[1] = {0};
-        bool flag = true;
-        for (size_t i = 0; i < 1; i++) {
-            test = exp_search(A, 1, B[i]);
-            exp_result[i] == bin_search(A, 1, test, B[i]) ? flag = true : flag = false;
-        }
-        assert(flag == true);
-    }
-
-        {
-        borders test;
-        int A[8] = {-15, -2, 1, 2 , 3, 10, 57, 89};
-        int B[6] = {-1, 10, 33, 0, 2, 89};
-        int exp_result[6] = {2, 5, 6, 2, 3, 7};
-        bool flag = true;
-        for (size_t i = 0; i < 6; i++) {
-            test = exp_search(A, 8, B[i]);
-            exp_result[i] == bin_search(A, 8, test, B[i]) ? flag = true : flag = false;
-        }
-        assert(flag == true);
-    }
-
-}
-
-int main() {
-    test_program();
-    // run();
 }
