@@ -1,12 +1,25 @@
+// Имеется лог-файл, в котором хранятся пары для N пользователей (Идентификатор пользователя, посещаемость сайта).
+// Напишите программу, которая выбирает K пользователей, которые чаще других заходили на сайт, и выводит их в порядке возрастания посещаемости.
+// Количество заходов и идентификаторы пользователей не повторяются. 
+
 #include <iostream>
 
-template<class T>
+struct Pair {
+    int id;
+    int quantity;
+
+    bool operator< (const Pair& p) const {
+        return this->quantity < p.quantity;
+    }
+};
+
+template<typename T>
 bool is_less(const T &l, const T &r) {
     return l < r;
 }
 
-template <class T>
-class heap {
+template <typename T>
+class Heap {
 private:
     int size = 0;
     int buffer_size = 3;
@@ -59,14 +72,14 @@ private:
     };
     
 public:
-    heap() = default;
-    heap(const heap&) = delete;
-    heap& operator=(const heap& h) = delete;
-    ~heap() {
+    Heap() = default;
+    Heap(const Heap&) = delete;
+    Heap& operator=(const Heap& h) = delete;
+    ~Heap() {
         delete[] arr;
     }
 
-    int get_size () {
+    int get_size () const {
         return size;
     }
     
@@ -86,35 +99,27 @@ public:
         --size;
         return min;
     }
-
-    void print_heap() {
-        for (size_t i = 0; i < size; i++) {
-            std::cout << arr[i] << " ";
-        }
-    }
 };
 
 int main() {
-    heap <int> hp;
-    int amount;
-    int elem;
-    int arr_size;
-    std::cin >> amount;
+    Heap <Pair> hp;
+    Pair pr;
+    int N;
+    int K;
 
-    for (size_t i = 0; i < amount; i++) {
-        std::cin >> arr_size;
-        for (size_t j = 0; j < arr_size; j++) {
-            std::cin >> elem;
-            hp.add_element(elem);
-        }   
+    std::cin >> N >> K;
+
+    for (size_t i = 0; i < N; i++) {
+        std::cin >> pr.id >> pr.quantity;
+        hp.add_element(pr);
+        if (hp.get_size() == K+1) {
+            hp.extract_min();
+        }
     }
 
-    amount = hp.get_size();
-
-    for (size_t i = 0; i < amount; i++) {
-        std::cout << hp.extract_min() << " ";
+    for (size_t i = 0; i < K; i++) {
+        std::cout << hp.extract_min().id << " ";
     }
-    
 
     return 0;
 }
