@@ -16,13 +16,14 @@ bool is_less(const T &l, const T &r) {
 }
 
 template <class T>
-int *median_of_three(T *first, T *second, T *third) {
+int &median_of_three(T &first, T &second, T &third) {
 	if (first < second) {
 		if (second < third) {
 			return second;
-		} else if (first < third) {
+		}
+        if (first < third) {
 			return third;
-		} else{
+		} else {
 			return first;
 		}
 	} else {
@@ -31,29 +32,29 @@ int *median_of_three(T *first, T *second, T *third) {
 		} else if (second < third) {
 			return third;
 		} else {
-			return third;
+			return second;
 		}
 	}
 }
 
 template<class T>
 int partition(T* arr, const int left, const int right, bool (is_less)(const T &l, const T &r)) {
-
-    int *median = median_of_three(&arr[left], &arr[(right - left) / 2 + left], &arr[right]);
-
-    std::swap(*median, arr[right]);
-
-    int i = right, j = right;
-
-    while (j > left) {
-        while (!is_less(arr[left], arr[j]) && is_less(left, j))
-            --j;
-        while (is_less(arr[left], arr[j]) && is_less(left, j))
-            std::swap(arr[j--], arr[i--]);
+    if(right == left) {
+        return left;
     }
 
-    std::swap(arr[left], arr[i]);
+    int &median = median_of_three(arr[left], arr[(right + left) / 2], arr[right]);
 
+    std::swap(median, arr[left]);
+
+    int pvt = arr[left], j = right, i = right + 1;
+
+    for(; j > left; j--) {
+        if (!is_less(arr[j], pvt)) {
+            std::swap(arr[j], arr[--i]);
+        }
+    }
+    std::swap(arr[left], arr[--i]);
     return i;
 }
 
@@ -146,22 +147,21 @@ void test() {
 }
 
 int main() {
-    test();
-    // int size;
-    // std::cin >> size;
-    // int *arr = new int[size];
-    // for (int i = 0; i < size; ++i) {
-    //     std::cin >> arr[i];
-    // }
+    int size;
+    std::cin >> size;
+    int *arr = new int[size];
+    for (int i = 0; i < size; ++i) {
+        std::cin >> arr[i];
+    }
 
-    // int med = size/2;
-    // int p10 = size/10;
-    // int p90 = size*9/10;
+    int med = size/2;
+    int p10 = size/10;
+    int p90 = size*9/10;
 
-    // std::cout << k_stat(arr, p10, size, is_less) << "\n";
-    // std::cout << k_stat(arr, med, size, is_less) << "\n";
-    // std::cout << k_stat(arr, p90, size, is_less) << "\n";
+    std::cout << k_stat(arr, p10, size, is_less) << "\n";
+    std::cout << k_stat(arr, med, size, is_less) << "\n";
+    std::cout << k_stat(arr, p90, size, is_less) << "\n";
 
-    // delete[] arr;
-    // return 0;
+    delete[] arr;
+    return 0;
 }
