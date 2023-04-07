@@ -13,32 +13,33 @@ struct Pair {
     }
 };
 
-template<typename T>
-bool is_less(const T &l, const T &r) {
-    return l < r;
-}
-
 template <typename T>
+struct DefaultComparator {
+    bool operator()(const T& l, const T& r) const {
+        return l < r;
+    }
+};
+
+template <typename T, typename Comparator = DefaultComparator<T>>
 class Heap {
 private:
-    int size = 0;
-    int buffer_size = 3;
-    T* arr = new T[3];
+    int size;
+    int buffer_size;
+    T* arr = new T[buffer_size];
+    Comparator comp;
 
-    void sift_down(int ind, bool (*is_less)(const T&, const T&)) {
-        int largest = 0;
-        int left = 0;
-        int right = 0;
+    void sift_down(int ind, Comparator comp = Comparator()) {
+        int largest = 0, left = 0, right = 0;
 
         while (1) {
             largest = ind;
             left = 2 * ind + 1;
             right = 2 * ind + 2;
 
-            if (left <= size - 1 && is_less(arr[left], arr[ind]))
+            if (left <= size - 1 && comp(arr[left], arr[ind]))
                 largest = left;
             
-            if (right <= size - 1 && is_less(arr[right], arr[largest]))
+            if (right <= size - 1 && comp(arr[right], arr[largest]))
                 largest = right;
             
             if (largest != ind) {
@@ -60,11 +61,11 @@ private:
     }
     
 
-    void sift_up(int ind, bool (*is_less)(const T&, const T&)) {
+    void sift_up(int ind, Comparator comp = Comparator()) {
         int parent;
         while (ind > 0) {
             parent = (ind - 1)/2;
-            if (is_less(arr[ind], arr[parent])) {
+            if (comp(arr[ind], arr[parent])) {
                 std::swap(arr[ind], arr[parent]);
             }
             ind = parent;
@@ -72,7 +73,7 @@ private:
     };
     
 public:
-    Heap() = default;
+    Heap(Comparator comp = Comparator()) : comp(comp), buffer_size(3), size(0) {}
     Heap(const Heap&) = delete;
     Heap& operator=(const Heap& h) = delete;
     ~Heap() {
@@ -88,14 +89,14 @@ public:
             grow_buffer();
         }
         arr[size] = elem;
-        sift_up(size, is_less);
+        sift_up(size);
         ++size;
     }
     
     T extract_min() {
         T min = arr[0];
         arr[0] = arr[size - 1];
-        sift_down(0, is_less);
+        sift_down(0);
         --size;
         return min;
     }
